@@ -1,6 +1,8 @@
 import os
+import textwrap
 
 from dataclasses import dataclass
+
 
 def main():
     print("Hello from advent2025!")
@@ -80,7 +82,49 @@ class Day_1:
         print("zero counter:", self.zero_counter)
         print("zero passer:", self.zero_passer_counter)
 
+class Day_2:
+
+    def __init__(self, data_path):
+        self.data_path = data_path
+        self.data = read_text_file(data_path)
+
+    def parse_data(self):
+        self.parsed_data = [tuple(id_range.split("-")) for id_range in self.data.split(",")]
+
+    def explode_ids(self):
+        self.exploded_ids = []
+        for first_id, last_id in self.parsed_data:            
+            self.exploded_ids += range(int(first_id), int(last_id)+1)
+
+    def is_id_valid(self, product_id):
+        str_id = str(product_id)
+        len_str_id = len(str_id)
+        
+        for parts in range(len_str_id//2):
+            if len(set(textwrap.wrap(str_id, parts+1))) == 1:
+                return False
+
+        return True       
+
+    def sum_invalid_ids(self):
+        self.invalid_ids = [product_id for product_id in self.exploded_ids 
+            if not self.is_id_valid(product_id)]
+         
+        self.invalid_id_sum = sum(self.invalid_ids)
+
+    def solve(self):
+        self.parse_data()
+        self.explode_ids()
+        self.sum_invalid_ids()
+        print("Sum of invalid ids:", self.invalid_id_sum)
+
+
 if __name__ == "__main__":
     main()
-    day_1 = Day_1(os.path.join("data", "day_01.txt"))
-    day_1.solve()
+
+    # day_1 = Day_1(os.path.join("data", "day_01.txt"))
+    # day_1.solve()
+
+    day_2 = Day_2(os.path.join("data", "day_02_test.txt"))
+    day_2.solve()
+
